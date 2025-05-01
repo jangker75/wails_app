@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"wails-excel-import/backend"
+	"wails-excel-import/backend/models"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -17,7 +18,7 @@ func main() {
 	// Create an instance of the app structure
 	app := NewApp()
 	importer := backend.NewImporter()
-
+	models.ConnectDatabase()
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:  "wails-excel-import",
