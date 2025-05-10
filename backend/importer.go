@@ -40,6 +40,7 @@ func (i *Importer) SelectAndImportExcel() (ExcelData, error) {
 
 type ExcelData struct {
 	Filename string     `json:"filename"`
+	IsSaveDB bool       `json:"isSaveDB"`
 	Header   []string   `json:"header"`
 	Details  [][]string `json:"details"`
 }
@@ -57,8 +58,9 @@ func (i *Importer) ImportExcel(filePath string) (ExcelData, error) {
 	}
 	runtime.LogDebugf(i.ctx, "Sheet List: %s", rows[0][0])
 	var data = ExcelData{
-		Header:  []string{},
-		Details: [][]string{},
+		IsSaveDB: false,
+		Header:   []string{},
+		Details:  [][]string{},
 	}
 
 	if rows[0][0] == "Menu" {
@@ -113,6 +115,7 @@ func MappingListMenuPP(data [][]string, filename string) (ExcelData, error) {
 					Name:  row[0],
 					Price: 0,
 				})
+				tmp.IsSaveDB = true
 			}
 		}
 	}
@@ -128,14 +131,17 @@ func InsertDataToDB(data models.Product) error {
 	})
 	return nil
 }
-func DeleteDataFromDB() (models.Response, error) {
+func (i *Importer) DeleteAllDataFromDB() (models.Response, error) {
 	// Implementasi untuk menghapus data dari database
 	// Misalnya, menggunakan GORM untuk menghapus data dari tabel yang sesuai
 	res := models.Response{
 		Status:  "error",
 		Message: "Deleted Failed",
 		Data:    nil}
-	models.DB.Delete(&models.Product{})
-
+	tx := models.DB.Exec("DELETE FROM products")
+	if tx.Error == nil {
+		res.Message = "Deleted Success"
+		res.Status = "success"
+	}
 	return res, nil
 }
