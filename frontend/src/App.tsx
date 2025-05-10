@@ -16,7 +16,7 @@ function App() {
         try {
             setError(null);
             const result = await SelectAndImportExcel();
-            console.log("result", result);
+            // console.log("result", result);
 
             setData(result);
         } catch (err: any) {
@@ -24,11 +24,22 @@ function App() {
             setError("Gagal mengimpor file Excel.");
         }
     };
+    const handleDelete = async () => {
+        try {
+            console.log("handleDelete clicked");
+            
+        }
+        catch (err: any) {
+            console.error(err);
+            setError("Gagal menghapus data.");
+        }
+    }
 
     return (
         <div className="container w-screen mx-auto my-10">
             <h1>Import File Excel</h1>
             <Button className='bg-blue-500 text-white hover:cursor-pointer' onClick={handleImport}>Pilih File Excel</Button>
+            <Button className='bg-red-500 text-white hover:cursor-pointer' onClick={handleDelete}>Delete Data</Button>
 
             {error && <p style={{ color: "red" }}>{error}</p>}
 
